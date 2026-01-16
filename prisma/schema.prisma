@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid()) // primary key
+  email        String   @unique
+  name         String?
+  profileImage String?
+  createdAt    DateTime @default(now())
+  posts        Post[] // A user can have multiple posts  one to many relation
+}
+
+model Post {
+  id          String @id @default(uuid())
+  title       String
+  description String
+  likes       Int    @default(0)
+
+  userId String // foreign Key
+
+  // This is a Prisma-level relation, Lets you do: post.user.name
+  // Enables
+  // include: { user: true }
+  // connect, disconnect
+  // Type safety
+  user User @relation(fields: [userId], references: [id])
+}
