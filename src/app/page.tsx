@@ -1,39 +1,41 @@
-"use client"
-import { signIn, signOut, useSession } from 'next-auth/react'
-import React from 'react'
+"use client";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 
-const Page = () => {
-    const { data: session, status } = useSession()
+const page = () => {
+  const { data: session, status } = useSession();
+  console.log(session);
+  return (
+    <div className="flex flex-col gap-10 h-screen items-center justify-center">
+      {session?.user?.image && (
+        <Image
+          alt="profile image"
+          src={session.user.image!}
+          height={100}
+          width={100}
+          className="h-10 w-10 object-contain rounded-sm"
+        />
+      )}
+      {session?.user?.name} <br />
+      {session?.user?.email}
+      {status === "unauthenticated" && (
+        <button
+          className="bg-black text-white px-8 py-4 rounded-sm cursor-pointer"
+          onClick={() => signIn("google")}
+        >
+          Login With Google
+        </button>
+      )}
+      {status === "authenticated" && (
+        <button
+          className="bg-black text-white px-8 py-4 rounded-sm cursor-pointer"
+          onClick={() => signOut()}
+        >
+          Log out
+        </button>
+      )}
+    </div>
+  );
+};
 
-    return (
-        <div className='flex flex-col h-screen justify-center items-center gap-4'>
-            {status === "unauthenticated" && (
-                <button
-                    className='cursor-pointer bg-white px-4 py-2 rounded-md text-black hover:bg-blue-600 transition-colors'
-                    onClick={() => signIn("google")}
-                >
-                    Login with Google
-                </button>
-            )}
-
-            {status === "authenticated" && (
-                <div className='flex flex-col items-center gap-6'>
-                    <div className='text-center'>
-                        <h1 className='text-2xl font-bold'>Welcome!</h1>
-                        <p className='text-gray-600'>Logged In as: {session?.user?.name}</p>
-                        <p className='text-sm text-gray-500'>{session?.user?.email}</p>
-                    </div>
-                    <button
-                        className='cursor-pointer bg-red-500 px-6 py-2 rounded-md text-white hover:bg-red-600 transition-colors'
-                        onClick={() => signOut()}
-                    >
-                        Logout
-                    </button>
-                    
-                </div>
-            )}
-        </div>
-    )
-}
-
-export default Page
+export default page;
